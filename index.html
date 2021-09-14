@@ -265,7 +265,7 @@
 
       document.addEventListener('keydown', keydown);
       document.addEventListener('keyup', keyup);
-      someInput.addEventListener('click', click, true);
+      document.addEventListener('click', click, true);
 
       function prev_active() {
         if ( active_i == 0 ) active_i = result_count-1;
