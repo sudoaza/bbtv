@@ -184,6 +184,7 @@
       }
 
       function startPlaying(id) {
+        console.log('Playing id:'+ id);
         player.classList.add('playing');
         ytplayer = new YT.Player('embed', {
           width: '98%',
@@ -234,6 +235,7 @@
         if ( e.key == 'Enter' ) {
           clearSearchQuery();
           if ( is_playing() ) return;
+          if ( typeof(active_i) == 'undefined' || typeof(content[active_i]) == 'undefined' ) return;
           startPlaying(content[active_i]['_id']);
           return;
         }
