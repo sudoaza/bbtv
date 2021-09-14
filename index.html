@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      input#search {
+        margin: 0 auto;
+        font-size: 10rem;
+        text-transform: uppercase;
+        border: 0;
+        outline:none;
+        width: 100%;
+        display: block;
+      }
+
+      div#results {
+        margin: 0 auto;
+        display: block;
+        width: 100%;
+      }
+
+      div#results a {
+        opacity: 0.7;
+      }
+      div#results a img {
+        width: 20rem;
+        height: 15rem; 
+      }
+      div#results a.active {
+        opacity: 1;
+      }
+      div#results a.active img {
+        border: 1rem #33aadd dashed;
+      }
+
+      div#player { display: none; }
+      div#player.playing { display: block; width: 100%; height: 100%; background: black; position: absolute; top:0; left:0; }
+    </style>
+    <script src="http://www.youtube.com/player_api"></script>
+    <script>
+      const permit = ' qwertyuiopasdfghjklñzxcvbnm1234567890';
+
+      var content = [
+        {"url":"https://www.youtube.com/watch?v=2YN8bUHufPk","description":"Yo Gabba Gabba Eat, 101"},
+        {"url":"https://www.youtube.com/watch?v=SxKsH3lK5Ks","description":"Yo Gabba Gabba Summer, 102"},
+        {"url":"https://www.youtube.com/watch?v=YS2CnUTkC7o","description":"Yo Gabba Gabba Fun, 103"},
+        {"url":"https://www.youtube.com/watch?v=u-6xj2OXfJI","description":"Yo Gabba Gabba Dance, 104"},
+        {"url":"https://www.youtube.com/watch?v=PjlGpXfMzUY","description":"Yo Gabba Gabba Sleep, 105"},
+        {"url":"https://www.youtube.com/watch?v=X615MsbAZG8","description":"Yo Gabba Gabba Happy, 106"},
+        {"url":"https://www.youtube.com/watch?v=iGLN677ferM","description":"Yo Gabba Gabba Friends, 107"},
+        {"url":"https://www.youtube.com/watch?v=JSnC8yRZ0h0","description":"Yo Gabba Gabba Careful, 108"},
+        {"url":"https://www.youtube.com/watch?v=qRO59ILhGAk","description":"Yo Gabba Gabba Scary, 109"},
+        {"url":"https://www.youtube.com/watch?v=dDgppZgWnb4","description":"Yo Gabba Gabba Halloween, 110"},
+        {"url":"https://www.youtube.com/watch?v=255hREzp9H0","description":"Yo Gabba Gabba Greetings, 111"},
+        {"url":"https://www.youtube.com/watch?v=FUlIWni4VVs","description":"Yo Gabba Gabba Move, 112"},
+
+        {"url":"https://www.youtube.com/watch?v=YRb1HFVeQ1k","description":"Noni noni Canticuenticos (Canción de cuna litoraleña)"},
+        {"url":"https://www.youtube.com/watch?v=eFdUXU9ZGls","description":"El monstruo de la laguna (Cumbia) Canticuenticos"},
+        
+        {"url":"https://www.youtube.com/watch?v=B6NbvIJpcE0","description":"Los Moomin Primavera en el Valle Moomin, capitulo 1"},
+        {"url":"https://www.youtube.com/watch?v=tYKXfp09w0c","description":"Los Moomin El sombrero mágico, capitulo 2"},
+        {"url":"https://www.youtube.com/watch?v=-nJYJRmwWBw","description":"Los Moomin El naufragio, capitulo 3"},
+        {"url":"https://www.youtube.com/watch?v=QrvIdVM-u1E","description":"Los Moomin Los Moomin descubren la isla, capitulo 4"},
+        {"url":"https://www.youtube.com/watch?v=V-QwOyfKHPw","description":"Los Moomin El Secreto de los Espectros, capitulo 6"},
+        {"url":"https://www.youtube.com/watch?v=3PP6-tRv6UA","description":"Los Moomin La Maleta, capitulo 7"},
+        {"url":"https://www.youtube.com/watch?v=GZhuvDWecQA","description":"Los Moomin La Magia del Mago Loco, capitulo 8"},
+        {"url":"https://www.youtube.com/watch?v=bR9jxwrGC4w","description":"Los Moomin Una amiga invisible parte 1, capitulo 9"},
+        {"url":"https://www.youtube.com/watch?v=pDGhXjufsOI","description":"Los Moomin Una amiga invisible Parte 2, capitulo 10 "},
+        {"url":"https://www.youtube.com/watch?v=D_Lz5Cn_MVU","description":"Los moomin Las alas, capitulo 11"},
+        {"url":"https://www.youtube.com/watch?v=f3UXvYc_J54","description":"Los Moomin Los piratas, capitulo 12"},
+        {"url":"https://www.youtube.com/watch?v=9b32V8pV4CA","description":"Los Moomin El último dragón sobre la Tierra, capitulo 13"},
+        {"url":"https://www.youtube.com/watch?v=A2kwsz1Otyc","description":"Los Moomin Nuestra Vecina es Muy Estricta, capitulo 14"},
+        {"url":"https://www.youtube.com/watch?v=d_Udk4rv3V4","description":"Los Moomin Snorkita Perdio la Memoria, capitulo 15"},
+        {"url":"https://www.youtube.com/watch?v=6le5nn9zqfM","description":"Los Moomin Encuentro con los extraterrestres, capitulo 16"},
+        {"url":"https://www.youtube.com/watch?v=ZZ6ov6ntyPA","description":"Los Moomin Un cambio de aire, capitulo 17"},
+        {"url":"https://www.youtube.com/watch?v=03xacN2dZw0","description":"Los Moomin Las semillas mágicas del océano capitulo 18 doblaje TVE"},
+        {"url":"https://www.youtube.com/watch?v=QAVSw9QMucc","description":"Los Moomin Encerrados en una jungla doblaje capitulo 19 TVE"},
+        {"url":"https://www.youtube.com/watch?v=qlzoahuA-FM","description":"Los Moomin Moomin salva a los tigres, capitulo 20 "},
+        {"url":"https://www.youtube.com/watch?v=YxgMXDERp30","description":"Los Moomin Snufkin Deja del Valle, capitulo 21"},
+        {"url":"https://www.youtube.com/watch?v=SCogOqe3iOM","description":"Los Moomin Visitantes en invierno, capitulo 23 "},
+        {"url":"https://www.youtube.com/watch?v=YhKS0L3y5UA","description":"Los Moomin ¡Date prisa, Snufkin!, capitulo 24"},
+        {"url":"https://www.youtube.com/watch?v=qBibdG6icqU","description":"Los Moomin El faro, capitulo 25"},
+        {"url":"https://www.youtube.com/watch?v=po4fvcnglyE","description":"Los Moomin El día que se encendió el faro, capitulo 26"},
+        {"url":"https://www.youtube.com/watch?v=2WzZu43Q2zY","description":"Los Moomin El teatro flotante, Capitulo 28"},
+        
+        {"url":"https://www.youtube.com/watch?v=sM-RwR_cZOc","description":"31 minutos El comienzo, 1"},
+        {"url":"https://www.youtube.com/watch?v=q3rGg_S5oLs","description":"31 minutos El árbol furioso, 2"},
+        {"url":"https://www.youtube.com/watch?v=4DfM5vK1FN0","description":"31 minutos Guerra en el Mar Despénsico, 3"},
+        {"url":"https://www.youtube.com/watch?v=7L8yRoiOljk","description":"31 minutos Benjamín Listillo, 4"},
+        {"url":"https://www.youtube.com/watch?v=GxTIupAEe1Q","description":"31 minutos Monstruo Chupachupa, 5"},
+        {"url":"https://www.youtube.com/watch?v=KYZrPGlFyAg","description":"31 minutos El experimento, 6"},
+        {"url":"https://www.youtube.com/watch?v=gWxdJtMYgao","description":"31 minutos El señor amable, 7"},
+        {"url":"https://www.youtube.com/watch?v=3SJ-pzhpMso","description":"31 minutos El asesor de imagen, 8"},
+        {"url":"https://www.youtube.com/watch?v=O4jA2YIjJ7I","description":"31 minutos Día libre, 9"},
+        {"url":"https://www.youtube.com/watch?v=0utr0LrT_Ns","description":"31 minutos El maguito, 10"},
+        {"url":"https://www.youtube.com/watch?v=GS7dBJYRvd0","description":"31 minutos La gotera, 11"},
+        {"url":"https://www.youtube.com/watch?v=jxKoIWmtuM8","description":"31 minutos Patana, 12"},
+
+        //{"url":"","description":""},
+      ];
+
+      var active_i = 0;
+      var result_count = 0;
+      var ytplayer;
+
+      function onPlayerStateChange(event) {        
+          if(event.data === 0) {          
+            stopPlaying();
+          }
+      }
+
+      /**
+       * Check URL against Regular Expression
+       *
+       * @param string url
+       * @return string|boolean
+       */
+      function parseYoutubeId(url) {
+        const regexp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+        const matches = url.match(regexp);
+        return matches ? matches[1] : false;
+      }
+
+      content.forEach(preprocess);
+
+      function preprocess(item, index, arr) {
+        content[index]['_description'] = item["description"].toLowerCase();
+        if (id = parseYoutubeId(item['url'])) {
+          content[index]['_id'] = id
+          content[index]['img'] = "http://img.youtube.com/vi/" + id + "/0.jpg";
+        }
+        content[index]['score'] = 0;
+      }
+
+      function do_query(item, index) {
+        var score = 0;
+        content[index]['score'] = score;
+        var q = search.value.toLowerCase();
+        ix = item._description.indexOf(q);
+        if ( ix === 0) score += 1;
+        if ( ix >= 0) score += 1;
+        content[index]['score'] = score;
+      }
+
+      function do_search() {
+        content.forEach(do_query);
+
+        content.sort((a, b) => {
+          if (a.score > b.score) return -1;
+          if (a.score < b.score) return 1;
+          return 0;
+        });
+
+        result_count = 0;
+        var items = content.map(i => {
+          if ( i['score'] <= 0 ) return;
+          result_count += 1;
+          html = '<a href="'+i['url']+'">';
+          if ( typeof i['img'] !== 'undefined' ) {
+            html += '<img src="' + i['img'] + '" alt="'+ i['description'] +'" />';
+          } else {
+            html += i['description'];
+          }
+          html += '</a>';
+          return html;
+        });
+        active_i = 0;
+        results.innerHTML = '';
+        results.innerHTML += items.join(" ");
+        move_active_cursor();
+      }
+
+      function clearSearchQuery() {
+        search.value = '';
+      }
+
+      function stopPlaying() {
+        ytplayer.destroy();
+        embed.innerHTML = '';
+        player.classList.remove('playing');
+      }
+
+      function is_playing() {
+        return player.classList.contains('playing');
+      }
+
+      function startPlaying(id) {
+        player.classList.add('playing');
+        ytplayer = new YT.Player('embed', {
+          width: '98%',
+          height: '98%',
+          videoId: id,
+          playerVars: {
+            'autoplay': 1,
+            'controls': 0,
+            'disablekb': 1,
+            'iv_load_policy': 3
+          },
+          events: {
+            onStateChange: onPlayerStateChange
+          }
+        });
+      }
+
+      function keydown(e) {
+        if ( e.key == 'ArrowLeft' ) {
+          prev_active();
+          return;
+        }
+        if ( e.key == 'ArrowUp' ) {
+          prev_active();
+          return;
+        }
+        if ( e.key == 'ArrowRight' ) { 
+          next_active();
+          return;
+        }
+        if ( e.key == 'ArrowDown' ) { 
+          next_active();
+          return;
+        }
+
+        if (e.key == ' ') {
+          next_active();
+          return;
+        }
+
+        if ( e.key == 'Escape' ) {
+          clearSearchQuery();
+          if ( ! is_playing() ) return;
+          stopPlaying();
+          return;
+        }
+
+        if ( e.key == 'Enter' ) {
+          clearSearchQuery();
+          if ( is_playing() ) return;
+          startPlaying(content[active_i]['_id']);
+          return;
+        }
+
+        do_search();
+
+        if ( e.key == 'Backspace' ) return;
+
+        if (e.key.length > 1 || permit.indexOf(e.key.toLowerCase()) === -1) {
+          e.preventDefault();
+          return;
+        }
+
+      }
+
+      document.addEventListener('keydown', keydown);
+
+      function prev_active() {
+        if ( active_i == 0 ) active_i = result_count-1;
+        else active_i = active_i-1;
+        move_active_cursor();
+      }
+      function next_active() {
+        if ( active_i == result_count-1 ) active_i = 0;
+        else active_i = active_i+1;
+        move_active_cursor();
+      }
+      function move_active_cursor() {
+        var elements = document.getElementsByClassName('active');
+        for (i = 0; i < elements.length; i++) { elements[i].classList.remove('active'); } 
+
+        elements = document.querySelectorAll('div#results a');
+        for (i = 0; i < elements.length; i++) { if ( i == active_i ) { elements[i].classList.add('active'); } } 
+      }
+    </script>
+  </head>
+  <body>
+    <input id="search" name="search" autofocus autocomplete="off" />
+    <div id="results">
+
+    </div>
+    <div id="player">
+      <div id="embed"></div>
+    </div>
+  </body>
+</html>
