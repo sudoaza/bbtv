@@ -238,18 +238,32 @@
           return;
         }
 
-        do_search();
-
         if ( e.key == 'Backspace' ) return;
+      }
+
+      function keyup(e) {
+        // we managed this on kkeydown
+        if ( ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown', ' ', 'Escape', 'Enter'].includes(e.key) ) {
+          return;
+        }
+
+        do_search();
 
         if (e.key.length > 1 || permit.indexOf(e.key.toLowerCase()) === -1) {
           e.preventDefault();
           return;
         }
+      }
 
+      function click(e) {
+        if ( is_playing() ) return;
+        search.focus();
+        startPlaying(content[active_i]['_id']);
       }
 
       document.addEventListener('keydown', keydown);
+      document.addEventListener('keyup', keyup);
+      someInput.addEventListener('click', click, true);
 
       function prev_active() {
         if ( active_i == 0 ) active_i = result_count-1;
