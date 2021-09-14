@@ -35,7 +35,7 @@
       div#player { display: none; }
       div#player.playing { display: block; width: 100%; height: 100%; background: black; position: absolute; top:0; left:0; }
     </style>
-    <script src="http://www.youtube.com/player_api"></script>
+    <script src="//www.youtube.com/player_api"></script>
     <script>
       const permit = ' qwertyuiopasdfghjklñzxcvbnm1234567890';
 
@@ -126,7 +126,7 @@
         content[index]['_description'] = item["description"].toLowerCase();
         if (id = parseYoutubeId(item['url'])) {
           content[index]['_id'] = id
-          content[index]['img'] = "http://img.youtube.com/vi/" + id + "/0.jpg";
+          content[index]['img'] = "//img.youtube.com/vi/" + id + "/0.jpg";
         }
         content[index]['score'] = 0;
       }
